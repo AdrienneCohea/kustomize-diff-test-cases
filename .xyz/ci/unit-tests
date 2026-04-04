@@ -3,4 +3,4 @@ apiVersion: ci.example.com/v1
 metadata:
   name: unit-tests
 spec:
-  run: dotnet test
+  run: dotnet test --fancy-arg
