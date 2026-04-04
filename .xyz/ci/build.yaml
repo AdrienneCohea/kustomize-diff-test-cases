@@ -4,4 +4,4 @@ metadata:
   name: my-build
 spec:
   stuff:
-    something: else
+    something: else-yo
