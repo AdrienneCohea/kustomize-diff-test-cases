@@ -1,4 +1,6 @@
 kind: SomeBuild
+metadata:
+  name: my-build
 spec:
   stuff:
     something: else-yo
