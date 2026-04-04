@@ -13,6 +13,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: AdrienneCohea/kustomize-diff@v1
+      - uses: AdrienneCohea/kustomize-diff@v1.0.0
         with:
           search-path: .xyz
