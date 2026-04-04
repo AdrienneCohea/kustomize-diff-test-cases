@@ -1,2 +1,3 @@
 resources:
 - build.yaml
+- unit-tests.yaml
