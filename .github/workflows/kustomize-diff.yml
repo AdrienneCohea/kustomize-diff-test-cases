@@ -14,3 +14,4 @@ jobs:
       - uses: AdrienneCohea/kustomize-diff@v1.0.2
         with:
           search-path: .xyz
+          force-truecolor: true
