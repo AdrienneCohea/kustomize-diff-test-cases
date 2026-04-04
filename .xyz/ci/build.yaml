@@ -1,0 +1,3 @@
+kind: SomeBuild
+spec:
+  stuff: {}
