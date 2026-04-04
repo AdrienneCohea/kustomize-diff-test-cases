@@ -1,4 +1,4 @@
 kind: SomeBuild
 spec:
   stuff:
-    something: else
+    something: else-yo
