@@ -1,3 +1,4 @@
 kind: SomeBuild
 spec:
-  stuff: {}
+  stuff:
+    something: else
