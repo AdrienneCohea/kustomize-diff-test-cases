@@ -1,4 +1,5 @@
 kind: SomeBuild
+apiVersion: ci.example.com/v1
 metadata:
   name: my-build
 spec:
