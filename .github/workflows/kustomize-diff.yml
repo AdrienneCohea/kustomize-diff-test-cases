@@ -11,6 +11,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: AdrienneCohea/kustomize-diff@v1.0.1
+      - uses: AdrienneCohea/kustomize-diff@v1.0.4
         with:
           search-path: .xyz
+          force-truecolor: true

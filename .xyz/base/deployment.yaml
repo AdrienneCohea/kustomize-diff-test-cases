@@ -16,7 +16,7 @@ spec:
         - name: nginx
           image: nginx:1.27
           ports:
-            - containerPort: 80
+            - containerPort: 443
           volumeMounts:
             - name: html
               mountPath: /usr/share/nginx/html
