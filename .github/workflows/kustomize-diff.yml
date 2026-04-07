@@ -6,19 +6,65 @@ on:
 jobs:
   kustomize-diff:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Comparing CI configuration
-        uses: AdrienneCohea/kustomize-diff@v1.0.6
+        id: ci-diff
+        continue-on-error: true
+        uses: AdrienneCohea/kustomize-diff@v1.0.8
         with:
           search-path: .xyz/ci
           force-truecolor: true
+          set-exit-code: "true"
 
       - name: Comparing application configuration
-        uses: AdrienneCohea/kustomize-diff@v1.0.6
+        id: app-diff
+        continue-on-error: true
+        uses: AdrienneCohea/kustomize-diff@v1.0.8
         with:
           search-path: .xyz/deployments
           force-truecolor: true
+          set-exit-code: "true"
+
+      - name: Delete comment if no differences found
+        if: steps.ci-diff.outcome == 'success' && steps.app-diff.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          comment_id=$(gh api "repos/${REPOSITORY}/issues/${PR_NUMBER}/comments" \
+            --jq '.[] | select(.body | startswith("<!-- kustomize-diff -->")) | .id' | head -1)
+          if [ -n "${comment_id}" ]; then
+            gh api "repos/${REPOSITORY}/issues/comments/${comment_id}" --method DELETE
+          fi
+
+      - name: Comment on PR if differences found
+        if: steps.ci-diff.outcome == 'failure' || steps.app-diff.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          job_url=$(gh api "repos/${REPOSITORY}/actions/runs/${RUN_ID}/jobs" \
+            --jq '.jobs[] | select(.name == "kustomize-diff") | .html_url')
+          sed "s|{{JOB_URL}}|${job_url}|" .github/kustomize-diff-comment.md > /tmp/pr-comment.md
+          comment_id=$(gh api "repos/${REPOSITORY}/issues/${PR_NUMBER}/comments" \
+            --jq '.[] | select(.body | startswith("<!-- kustomize-diff -->")) | .id' | head -1)
+          if [ -n "${comment_id}" ]; then
+            gh api "repos/${REPOSITORY}/issues/comments/${comment_id}" \
+              --method PATCH \
+              --field body=@/tmp/pr-comment.md
+          else
+            gh pr comment "${PR_NUMBER}" \
+              --repo "${REPOSITORY}" \
+              --body-file /tmp/pr-comment.md
+          fi
