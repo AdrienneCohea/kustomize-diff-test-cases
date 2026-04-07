@@ -18,7 +18,7 @@ jobs:
           force-truecolor: true
 
       - name: Comparing application configuration
-        uses: AdrienneCohea/kustomize-diff@vv2.0.0
+        uses: AdrienneCohea/kustomize-diff@v2.0.0
         with:
           search-path: .xyz/deployments
           force-truecolor: true
