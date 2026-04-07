@@ -12,13 +12,13 @@ jobs:
           fetch-depth: 0
 
       - name: Comparing CI configuration
-        uses: AdrienneCohea/kustomize-diff@v2.0.0
+        uses: AdrienneCohea/kustomize-diff@v1.0.8
         with:
           search-path: .xyz/ci
           force-truecolor: true
 
       - name: Comparing application configuration
-        uses: AdrienneCohea/kustomize-diff@v2.0.0
+        uses: AdrienneCohea/kustomize-diff@v1.0.8
         with:
           search-path: .xyz/deployments
           force-truecolor: true
