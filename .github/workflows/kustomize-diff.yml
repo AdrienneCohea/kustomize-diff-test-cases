@@ -56,7 +56,18 @@ jobs:
         run: |
           job_url=$(gh api "repos/${REPOSITORY}/actions/runs/${RUN_ID}/jobs" \
             --jq '.jobs[] | select(.name == "kustomize-diff") | .html_url')
-          body="<!-- kustomize-diff -->differences found: ${job_url}"
+          body="<!-- kustomize-diff -->
+This pull request changes Kubernetes manifests. You can see the changes displayed as a structural diff [here](${job_url}).
+
+If these changes match what you expect, you can continue to peer review and merging. If these changes are unexpected, consider the following possibilities:
+
+- Your teammate merged other changes to these Kubernetes manifests, and you may need to rebase or update this branch.
+- Your kustomization needs further iteration.
+
+# Useful Kustomization References
+
+- [Declarative Management of Kubernetes Objects Using Kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization/)
+- [Kustomize Detailed Reference Pages](https://kubectl.docs.kubernetes.io/references/kustomize/kustomization)"
           comment_id=$(gh api "repos/${REPOSITORY}/issues/${PR_NUMBER}/comments" \
             --jq '.[] | select(.body | startswith("<!-- kustomize-diff -->")) | .id' | head -1)
           if [ -n "${comment_id}" ]; then
